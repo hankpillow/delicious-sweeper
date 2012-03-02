@@ -17,7 +17,7 @@
 		<meta property="og:type" content="utility" />
 		<meta property="og:image" content="https://delicious-sweeper.appspot.com/img/Broom.png" />
 		<meta property="og:title" content="Delicious Sweeper" />
-		<meta property="og:description" content="This service helps you to find out the urls you've bookmarked into Delicious that got offline.">
+		<meta property="og:description" content="This app helps you to find out the urls you've bookmarked into Delicious that got offline.">
 
 		<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -45,14 +45,16 @@
 
 		<div id="fb-root"></div>
 		<script>
-		if (document.location.href!="http://delicious-sweeper.appspot.com/")return
-		(function(d, s, id) {
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=331598390208754";
-		fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));</script>
+		if (document.location.href=="http://delicious-sweeper.appspot.com/"){
+			(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=331598390208754";
+			fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		}
+		</script>
 
 		<script type="text/javascript" charset="utf-8">
 			yepnope( {
@@ -164,7 +166,7 @@
 						<h4>Privacy</h4>
 						<p>First of all this is a <strong>personal</strong> project and absolutely no personal information is kept, shared or so.</p>
 						<p>All the code is hosted on <a href="http://github.com">github</a> and you can see there that I'm not saving your personal data, but if you still not feeling good you can run this project locally in your computer.</p>
-						Instructions <a href="https://github.com/hankpillow/delicious-sweeper">here</a>
+						<p>Instructions <a href="https://github.com/hankpillow/delicious-sweeper">here</a></p>
 					</div>
 					<div class="span4">
 						<h4>Many thanks to:</h4>
