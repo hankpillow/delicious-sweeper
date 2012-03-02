@@ -21,7 +21,7 @@ Disclaimer
 
 First of all this is a **personal** project.
 
-Absolutely no personal information is kept, shared or so. The Delicious API seems to not be the most trustful thing at all, service timeout happens all the time. Be patient and use carefully!
+Absolutely no personal information is kept, shared or so. The Delicious API seems to not be the most reliable thing at all, service timeout happens all the time. Be patient and use carefully!
 
 This is a private project for personal use only!
 
