@@ -54,6 +54,7 @@ footer a{
 	padding:10px;
 	margin-bottom: 5px;
 	background-color:white;
+	overflow:hidden;
 }
 
 .alert-compact{
