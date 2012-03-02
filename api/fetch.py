@@ -24,15 +24,13 @@ class MainHandler(webapp.RequestHandler):
 			self.response.out.write( json.dumps({"status_code":-2,"message":"no url given"}) )
 			return
 
-		# headers = {'Origin': 'http://localhost:8080', 'Accept-Language': 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.46 Safari/535.11', 'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3', 'Connection': 'keep-alive', 'Cache-Control': 'max-age=0', 'Content-Type': 'application/x-www-form-urlencoded'}
-
 		response = fetch_status(url)
 		self.response.out.write( json.dumps(response) )
 
 def fetch_status( url, headers=None ):
 	response = {}
 	try:
-		result = urlfetch.fetch( url=url, deadline=60, allow_truncated=True, headers=headers)
+		result = urlfetch.fetch( url=url, deadline=60, allow_truncated=True)
 		response = {"status_code":result.status_code,"url":url}
 	except DownloadError, e:
 		response = {"status_code":-3, "message":"%s" % e, "url":url}
