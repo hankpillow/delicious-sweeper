@@ -1,6 +1,6 @@
 // author: igor almeida
 // since: 02-2012
-// version 1.0
+// version 1.1
 var app =
 {
 	  login_url  : "/login"
@@ -172,14 +172,19 @@ var app =
 		
 		app.login_status(app.messages.step1.connecting_api, "alert-info");
 
+		_gaq.push(['_trackEvent', 'step1', 'login', 'click']);
+
+		app.fetch_bookmark();
+	}
+	
+	, fetch_bookmark : function ( )
+	{
 		var form_data = {
 			  username:app.dom.step1.user.val()
 			, password:app.dom.step1.pass.val()
+			, start:app.urls.length
 		};
 
-		_gaq.push(['_trackEvent', 'step1', 'login', 'click']);
-
-		// calling server for login
 		$.ajax( {
 			  url: app.login_url
 			, type: "POST"
@@ -228,10 +233,7 @@ var app =
 			return;
 		}
 
-		_gaq.push(['_trackEvent', 'step1', 'login', 'success']);
-		
 		var result_node  = xml.find( "result" ).get(0);
-		// no result?
 		if ( result_node != undefined ){
 			app.login_status( $(result_node).attr("code") || app.messages.step1.parse_error, "alert-error" );
 			app.dom.step1.btn.click(app.login);
@@ -240,9 +242,7 @@ var app =
 		}
 
 		var posts = xml.find("posts").get(0);
-		// no posts node?
 		if ( posts == undefined ){
-			// console.info( data );
 			app.login_status( app.messages.step1.parse_error, "alert-error" );
 			app.login_btn_state("login");
 			return;
@@ -255,15 +255,18 @@ var app =
 			app.urls.push($(this).get(0));
 		});
 
-		// + DEBUG
-		// app.urls = app.urls.slice(0,10);
-		// app.show_step3();
-		// - DEBUG
-	
-		app.show_step2( app.urls.length );
+		var total = $(posts).attr("user") || app.urls.length;
 
-		app.login_btn_state("logout");
-		app.login_status( undefined );
+		if ( total < app.urls.length ){
+			app.fetch_bookmark();
+		}
+		else
+		{
+			_gaq.push(['_trackEvent', 'step1', 'login', 'success']);
+			app.show_step2( app.urls.length );
+			app.login_btn_state("logout");
+			app.login_status( undefined );
+		}
 	}
 	
 	, inspect_status: function( msg, style) 
@@ -414,23 +417,23 @@ var app =
 		});
 		app.dom.step3.div.fadeOut();
 	}
-	
+
 	, show_step3 : function( )
 	{
-		app.dom.step2.status(undefined);
+		app.inspect_status(undefined);
 		if (app.dom.step3.list.find("div").length==0){
 			app.delete_status( app.messages.step3.delete_complete, "label-info" );
 			app.delete_btn_state("none");
 		}
 		app.dom.step3.div.removeClass("hidden").fadeIn("slow");
 	}
-	
+
 	, add_url_error : function( data )
 	{
 		var template =  "<div class=\"well well-compact\">"
 			template += "<strong></strong><span></span><br />"
 			template += "<a href=\"#\" class=\"btn btn-mini btn-warning\" target=\"_blank\">try it</a> "
-			template += "<a href=\"#\" class=\"btn btn-mini btn-success\" title=\"Keep on delicious but remove from this list.\">ignore</a> "
+			template += "<a href=\"#\" class=\"btn btn-mini btn-success\" title=\"Keep on delicious but remove from this list.\">ignore</a>"
 			template += "<a href=\"#\" class=\"btn btn-mini btn-info\">details</a> "
 			template += "<a href=\"#\" class=\"btn btn-mini btn-danger\">delete</a> "
 			template += "<br /> "

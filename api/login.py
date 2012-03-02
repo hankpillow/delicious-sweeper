@@ -28,9 +28,14 @@ class MainHandler(webapp.RequestHandler):
 			self.response.out.write( json.dumps({"status_code":-3,"message":"null password"}) )
 			return
 
+		start = params.getvalue("start")
+		if (start == None):
+			self.response.out.write( json.dumps({"status_code":-4,"message":"null start"}) )
+			return
+
 		validator = re.compile('^[a-zA-Z0-9_.-]+$')
  		if validator.match(username) is None :
-			self.response.out.write( json.dumps({"status_code":-4,"message":"invalid username characters"} ) )
+			self.response.out.write( json.dumps({"status_code":-5,"message":"invalid username characters"} ) )
 			return
 
 		response = {}
@@ -38,7 +43,7 @@ class MainHandler(webapp.RequestHandler):
 			result = urlfetch.fetch(url="https://api.del.icio.us/v1/posts/all",headers={"Authorization": "Basic %s" % base64.b64encode(username+":"+password)},deadline=60, allow_truncated=True)
 			response = {"status_code":0,"result":result.content}
 		except Exception, e:
-			response = {"status_code":-5, "message":"%s" % e, "url":url}
+			response = {"status_code":-6, "message":"%s" % e, "url":url}
 
 		self.response.out.write( json.dumps(response) )
 

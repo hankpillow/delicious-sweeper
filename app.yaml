@@ -1,7 +1,9 @@
 application: delicious-sweeper
-version: 2
+version: 3
 runtime: python
 api_version: 1
+
+default_expiration: "1d"
 
 skip_files:
 - ^(.*/)?\.DS_Store
@@ -31,11 +33,9 @@ handlers:
   
 - url: /img
   static_dir: img
-  expiration: 1d
   
 - url: /css
   static_dir: css
-  expiration: 1d
 
 - url: /.*
   static_files: 404.html
