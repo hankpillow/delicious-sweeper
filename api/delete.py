@@ -28,11 +28,6 @@ class MainHandler(webapp.RequestHandler):
 			self.response.out.write( json.dumps({"status_code":-3,"message":"null password"}) )
 			return
 
-		validator = re.compile('^[a-zA-Z0-9_.-]+$')
- 		if validator.match(username) is None :
-			self.response.out.write( json.dumps({"status_code":-4,"message":"invalid username characters"} ) )
-			return
-
 		url = params.getvalue("url")
 		if (url == None):
 			self.response.out.write( json.dumps({"status_code":-6,"message":"null url"}) )
