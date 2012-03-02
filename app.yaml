@@ -1,0 +1,48 @@
+application: delicious-sweeper
+version: 2
+runtime: python
+api_version: 1
+
+skip_files:
+- ^(.*/)?\.DS_Store
+- ^(.git)
+
+handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+
+- url: /fetch
+  script: api/fetch.py
+
+- url: /login
+  script: api/login.py
+
+- url: /delete
+  script: api/delete.py
+
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+  mime_type: image/x-icon
+
+- url: /js
+  static_dir: js
+  expiration: 1d
+  
+- url: /img
+  static_dir: img
+  expiration: 1d
+  
+- url: /css
+  static_dir: css
+  expiration: 1d
+
+- url: /.*
+  static_files: 404.html
+  upload: 404.html
+
+error_handlers:
+- file: error.html
+- error_code: dos_api_denial
+  file: error.html

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+
+		<meta charset="utf-8">
+
+		<title>Delicious Sweeper</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="This service helps you to find out the urls you've bookmarked into Delicious that got offline.">
+		<meta name="author" content="igor almeida">
+		<meta name="expires" content="Never expire">
+
+		<!-- facebook -->
+		<meta property="og:url" content="https://delicious-sweeper.appspot.com" />
+		<meta property="og:site_name" content="Delicious Sweeper" />
+		<meta property="og:type" content="utility" />
+		<meta property="og:image" content="https://delicious-sweeper.appspot.com/img/Broom.png" />
+		<meta property="og:title" content="Delicious Sweeper" />
+		<meta property="og:description" content="This service helps you to find out the urls you've bookmarked into Delicious that got offline.">
+
+		<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<link rel="shortcut icon" href="favicon.ico">
+		
+		<style type="text/css" media="screen">
+			.invisible{
+				display:none;
+			}
+		</style>
+		
+		<script type="text/javascript" charset="utf-8">
+			var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', 'UA-432226-2']);
+				_gaq.push(['_trackPageview']);
+		</script>
+
+		<script src="js/yepnope.1.5.3-min.js"></script>
+
+	</head>
+
+	<body class="invisible">
+
+		<div id="fb-root"></div>
+		<script>
+		if (document.location.href!="http://delicious-sweeper.appspot.com/")return
+		(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=331598390208754";
+		fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
+
+		<script type="text/javascript" charset="utf-8">
+			yepnope( {
+				  load : ["js/app.js","js/jquery-1.7.1.min.js","js/bootstrap.min.js","css/bootstrap.min.css","css/page.css"]
+				, complete:function( ) {
+						$("body").removeClass("invisible");
+						app.init();
+					}
+				},
+				{ load : 'http://www.google-analytics.com/ga.js' }
+			);
+		</script>
+		<div class="navbar navbar-inner navbar-noborder">
+			<div class="container">
+				<div class="logo">
+					<img src="img/Broom.png" title="Sweeper"></img>
+					<h3>Delicious Sweeper</h3>
+				</div>
+				<div class="fb-like facebook"
+					data-href="http://delicious-sweeper.appspot.com"
+					data-send="false"
+					data-layout="button_count"
+					data-width="90"
+					data-show-faces="false">
+				</div>
+			</div>
+	    </div>
+		<div class="container">
+			<div class="row">
+				<!-- 
+				//////////////////////////////////////////
+				STEP 1
+				-->
+				<div id="step1" class="span4">
+					<h2>Step 1.</h2>
+					<h3>Delicous login.</h3>
+					<p>The Delicious API was the only way I found to get all url you have bookmarked so far. Consuming the public feed isn't enough because it returns just the last 100 items added.</p>
+					<form class="well" id="frm_login" action="/login" method="post" accept-charset="utf-8" onsumbit="">
+						<fieldset>
+							<div class="control-group" id="control-user">
+								<label class="control-label" for="delicious_user">Username</label>
+								<input class="span3" placeholder="delicious username" type="text" value="" id="delicious_user">	
+							</div>
+							<div class="control-group" id="control-pass">
+								<label class="control-label" for="delicious_pass">Password</label>
+								<input class="span3" type="password" value="" id="delicious_pass">
+							</div>
+						</fieldset>
+						<h3 id="delicious_name" class="fade out"></h3>
+						<input class="btn-large btn-primary" type="submit" id="btn_login" value="Login" />
+					</form>
+					<div id="login_status" class="alert hidden"></div>
+				</div>
+				<!-- 
+				//////////////////////////////////////////
+				STEP 2
+				-->
+				<div class="span4">
+					<h2>Step 2.</h2>
+					<h3>Testing url headers.</h3>
+					<p>Don't be scared, here we will just test all urls you have in your delicious account to see what is deprecated, redirected etc. <strong>Absolutely no url will be deleted or changed in any way during this step.</strong></p>
+
+					<div id="step2">
+						<h3 id="items_found">We found 0 urls in your account</h3>
+						<p>Important, Delicious returns only the last 1000 links from your account, even having much more than this.<br />
+						The process of fetching urls can take a while! Be patient and remember, you can stop the processes whenever you want.</p>
+
+						<input class="btn-large btn-primary" type="button" id="btn_inspect" value="Inspect" />
+						<strong id="count"></strong> <span id="inspection_status" class="label label-info fade out"> </span>
+						<br />
+
+						<h6 id="current_url"></h6>
+						<div class="progress progress-info progress-striped">
+							<div class="bar" id="progress_bar" style="width: 0%;"></div>
+						</div>
+						<div class="well well-compact">
+							<p><span class="label label-success">Success</span> <span id="uok">0 items found</span></p>
+							<span class="label label-important">Problem</span> <span id="unok">0 items found</span>
+						</div>
+					</div>
+				</div>
+				<!-- 
+				//////////////////////////////////////////
+				STEP 3
+				-->
+				<div class="span4">
+					<h2>Step 3.</h2>
+					<h3>Deleting the rubbish.</h3>
+					<p>During the step2 as long as the app finds a bad url it will appears in a list below. Just click and remove. Be careful at this time, some "errors" are just timeout. Use the <strong>try it</strong> button to see by yourself if the url is good or not!</p>
+					<div id="step3">
+						<input class="btn-large btn-danger" type="button" id="btn_delete_all" value="Delete" /> <span id="delete_status" class="label label-info fade out"></span>
+					</div>
+					<div id="list"></div>
+				</div>
+			</div>
+			<!-- end rows -->
+			<hr>
+			<footer class="footer">
+				<div class="row">
+					<div class="span4">
+						<h4>About</h4>
+						<p>How long have you being using Delicious?</p>
+						<p>Do you have an idea about how many urls you saved got offline since them?
+						This app helps you to find out the links which got offline, test and delete them if necessary.</p>
+						This is a private project for personal use only!
+						<p><small>License Released under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>.</small></p>
+					</div>
+					<div class="span4">
+						<h4>Privacy</h4>
+						<p>First of all this is a <strong>personal</strong> project and absolutely no personal information is kept, shared or so.</p>
+						<p>All the code is hosted on <a href="http://github.com">github</a> and you can see there that I'm not saving your personal data, but if you still not feeling good you can run this project locally in your computer.</p>
+						Instructions <a href="https://github.com/hankpillow/delicious-sweeper">here</a>
+					</div>
+					<div class="span4">
+						<h4>Many thanks to:</h4>
+						<ul class="unstyled">
+							<li><a href="http://code.google.com/appengine/">Google App Engine.</a></li>
+							<li><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></li>
+							<li><a href="http://github.com">Github</a></li>
+							<li><a href="http://www.smashingmagazine.com/tag/icons/">Smashing Magazine</a></li>	
+							<li><a href="http://jquery.com/">jquery</a></li>
+							<li><a href="http://yepnopejs.com/">yepnopejs</a></li>
+						</ul>
+					</div>
+				</div>
+			</footer>
+		</div><!-- container -->
+	</body>
+</html>
