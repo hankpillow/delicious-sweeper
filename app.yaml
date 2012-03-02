@@ -28,7 +28,6 @@ handlers:
 
 - url: /js
   static_dir: js
-  expiration: 1d
   
 - url: /img
   static_dir: img
