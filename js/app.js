@@ -93,10 +93,6 @@ var app =
 		app.inspect_btn_state("inspect");
 		app.delete_btn_state("delete all");
 
-		// editable
-		app.dom.step1.user.attr("readonly",false);
-		app.dom.step1.pass.attr("readonly",false);
-
 		// cleanup status
 		app.dom.step1.user.parent().removeClass("error");
 		app.dom.step1.pass.parent().removeClass("error");
@@ -244,7 +240,7 @@ var app =
 		}
 
 		var posts = xml.find("posts").get(0);
-		// no posts?
+		// no posts node?
 		if ( posts == undefined ){
 			// console.info( data );
 			app.login_status( app.messages.step1.parse_error, "alert-error" );
@@ -268,9 +264,6 @@ var app =
 
 		app.login_btn_state("logout");
 		app.login_status( undefined );
-		// making fields not editable
-		app.dom.step1.user.attr("readonly",true);
-		app.dom.step1.pass.attr("readonly",true);
 	}
 	
 	, inspect_status: function( msg, style) 
@@ -372,9 +365,10 @@ var app =
 		}
 
 		var url = $(app.urls[app.url_index]).attr("href");
-		if (/^.+(?=#)/.test(url)) url = url.match(/^.+(?=#)/)[0];
+		if (/^.+(?=#)/.test(url)) {
+			url = url.match(/^.+(?=#)/)[0];
+		}
 		app.dom.step2.url.text(url);
-		// console.log("fetch:"+app.fetch_url+"?u="+url);
 	
 		$.ajax({
 			  url : app.fetch_url
@@ -573,9 +567,6 @@ var app =
 
 	, handle_delete_result : function( data )
 	{
-		console.log("handle_delete_result");
-		console.info(data);
-
 		if (data == undefined || data.result == undefined || data.status_code != 0 ){
 			app.delete_status( data.message || app.messages.step1.service_error, "label-important" );
 			app.trigged_delete = undefined;
