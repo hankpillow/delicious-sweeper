@@ -235,7 +235,7 @@ var app =
 
 		var result_node  = xml.find( "result" ).get(0);
 		if ( result_node != undefined ){
-			app.login_status( $(result_node).attr("code") || app.messages.step1.parse_error, "alert-error" );
+			app.login_status( "Delious API says: "+$(result_node).attr("code") || app.messages.step1.parse_error, "alert-error" );
 			app.dom.step1.btn.click(app.login);
 			app.login_btn_state("login");
 			return;
