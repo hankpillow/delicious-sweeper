@@ -1,6 +1,6 @@
 // author: igor almeida
 // since: 02-2012
-// version 1.1
+// version 1.2
 var app =
 {
 	  login_url  : "/login"
@@ -37,7 +37,7 @@ var app =
 			, delete_complete : "Nothing to delete."
 			, label_delete_all : "Delete all."
 			, label_stop_deleting : "Stop!"
-			, label_nothing : "Nothing"
+			, label_nothing : "Done!"
 		}
 	}
 
@@ -97,15 +97,14 @@ var app =
 		app.dom.step1.user.parent().removeClass("error");
 		app.dom.step1.pass.parent().removeClass("error");
 
-		app.dom.step1.form.bind("submit", function(e) {
+		app.dom.step1.form.unbind("submit").bind("submit", function(e){
+			e.preventDefault();
 			if (app.loginstatus == "logout" ){
 				app.logout();
-			}else if (app.loginstatus == "login"){
-				app.login();
-			}else{
-				// connecting....
 			}
-			e.preventDefault();
+			else if (app.loginstatus == "login"){
+				app.login();
+			}
 		});
 
 		// cleanup status messages
@@ -138,10 +137,10 @@ var app =
 	, login_status: function( msg, style) 
 	{
 		if (msg==undefined){
-			app.dom.step1.status.removeClass().addClass("hidden").text("");
+			app.dom.step1.status.text("").fadeOut();
 			return
 		}
-		app.dom.step1.status.removeClass().addClass("show alert "+style).text(msg);
+		app.dom.step1.status.removeClass().addClass("show alert "+style).text(msg).fadeIn();
 	}
 
 	, login: function( data )
@@ -163,7 +162,6 @@ var app =
 		
 
 		app.login_btn_state("connecting");
-		app.dom.step1.status.removeClass().addClass("hidden");
 
 		// + DEBUG
 		// app.show_step2(100);
@@ -228,7 +226,6 @@ var app =
 		{
 			_gaq.push(['_trackEvent', 'step1', 'login', 'error']);
 			app.login_status( app.messages.step1.api_error, "alert-error" );
-			app.dom.step1.btn.click(app.login);
 			app.login_btn_state("login");
 			return;
 		}
@@ -236,7 +233,6 @@ var app =
 		var result_node  = xml.find( "result" ).get(0);
 		if ( result_node != undefined ){
 			app.login_status( "Delious API says: "+$(result_node).attr("code") || app.messages.step1.parse_error, "alert-error" );
-			app.dom.step1.btn.click(app.login);
 			app.login_btn_state("login");
 			return;
 		}
@@ -291,8 +287,6 @@ var app =
 		app.inspect_status( undefined );
 		app.dom.step2.div.fadeOut( );
 
-		app.url_ok.length = 0;
-		app.url_nok.length = 0;
 		app.update_count();
 
 		var msg = app.messages.step2.api_result.replace("{total}",0);
@@ -387,11 +381,13 @@ var app =
 
 	, parse_status_code : function( data )
 	{
-		var errors = [-4,-5,-100,400,401,402,404,500,501,503];
+		var errors = [-4,-5,-100,400,401,402,404,501,503];
 
 		if (errors.indexOf(data.status_code)!=-1)
 		{
-			console.info(data);
+			if (console!=undefined && typeof console.info == "function" ){
+				console.info(data);	
+			}
 			app.url_nok.push( app.urls[app.url_index] );
 			app.add_url_error( app.urls[app.url_index] );
 			app.inspect_status( "error", "alert-error" );
@@ -409,7 +405,7 @@ var app =
 
 	, hide_step3 : function( )
 	{
-		app.delete_status( );
+		app.delete_status( undefined );
 		app.stop_deleting( );
 		app.dom.step3.list.find("div").each(function(index){
 			$(this).detach();
@@ -423,16 +419,17 @@ var app =
 		if (app.dom.step3.list.find("div").length==0){
 			app.delete_status( app.messages.step3.delete_complete, "label-info" );
 			app.delete_btn_state("none");
+		}else{
+			app.dom.step3.div.fadeIn("slow");
 		}
-		app.dom.step3.div.removeClass("hidden").fadeIn("slow");
 	}
 
 	, add_url_error : function( data )
 	{
 		var template =  "<div class=\"well well-compact\">"
-			template += "<strong></strong><span></span><br />"
+			template += "<span></span><br />"
 			template += "<a href=\"#\" class=\"btn btn-mini btn-warning\" target=\"_blank\">try it</a> "
-			template += "<a href=\"#\" class=\"btn btn-mini btn-success\" title=\"Keep on delicious but remove from this list.\">ignore</a>"
+			template += "<a href=\"#\" class=\"btn btn-mini btn-success\" title=\"Keep on delicious but remove from this list.\">ignore</a> "
 			template += "<a href=\"#\" class=\"btn btn-mini btn-info\">details</a> "
 			template += "<a href=\"#\" class=\"btn btn-mini btn-danger\">delete</a> "
 			template += "<br /> "
@@ -452,9 +449,6 @@ var app =
 		var xml_url	= $(data).attr("href");
 		var node_span = node.find("span");
 			node_span.text( xml_url );
-			
-		var node_strong = node.find("strong");
-			node_strong.text(index+". ");
 
 		var node_detail = node.find("a.btn-info");
 			node_detail.click( value, app.detail_item);
@@ -502,17 +496,18 @@ var app =
 			case "stop":
 				app.is_deleting_all = true;
 				app.dom.step3.btn.unbind( "click" ).click(app.stop_deleting);
-				app.dom.step3.btn.val( app.messages.step3.label_stop_deleting );
+				app.dom.step3.btn.val( app.messages.step3.label_stop_deleting ).show();
 			break;
 			case "none":
 				app.is_deleting_all = false;
 				app.dom.step3.btn.unbind( "click" )
 				app.dom.step3.btn.val( app.messages.step3.label_nothing );
+				app.dom.step3.btn.hide();
 			break;
 			default:
 				app.is_deleting_all = false;
 				app.dom.step3.btn.unbind( "click" ).click(app.delete_all);
-				app.dom.step3.btn.val( app.messages.step3.label_delete_all );
+				app.dom.step3.btn.val( app.messages.step3.label_delete_all ).show();
 			break;
 		}
 	}
@@ -520,10 +515,10 @@ var app =
 	, delete_status: function( msg, style) 
 	{
 		if (msg==undefined){
-			app.dom.step3.status.removeClass().addClass("label label-info").text("").stop().fadeOut();
+			app.dom.step3.status.removeClass().addClass("label label-info").text("").hide()
 			return;
 		}
-		app.dom.step3.status.removeClass().addClass("label "+style).text(msg).stop().fadeIn();
+		app.dom.step3.status.removeClass().addClass("label "+style).text(msg).show();
 	}
 	
 	, delete_item : function( event )
@@ -538,7 +533,7 @@ var app =
 		$(this).unbind("click");
 
 		var form_data = {
-			  url		:  "errado"//$( event.data.xml ).attr("href")
+			  url		: $( event.data.xml ).attr("href")
 			, username	: app.dom.step1.user.val()
 			, password	: app.dom.step1.pass.val()
 		};
@@ -622,7 +617,8 @@ var app =
 		var divs = app.dom.step3.list.find("div");
 		if (divs.length==0){
 			app.stop_deleting();
-			app.delete_status(app.messages.step3.delete_complete,"label-success");
+			app.delete_status( app.messages.step3.delete_complete, "label-info" );
+			app.delete_btn_state("none");
 			return;
 		}
 		app.dom.step3.status.fadeOut();
@@ -634,5 +630,6 @@ var app =
 	, stop_deleting : function ( )
 	{
 		app.delete_btn_state("delete all");
+		app.trigged_delete = undefined;
 	}
 }
