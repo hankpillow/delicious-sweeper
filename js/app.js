@@ -255,9 +255,8 @@ var app =
 			app.urls.push($(this).get(0));
 		});
 
-		var total = $(posts).attr("user") || app.urls.length;
-
-		if ( total < app.urls.length ){
+		var total = $(posts).attr("total") || app.urls.length;
+		if ( app.urls.length < total){
 			app.fetch_bookmark();
 		}
 		else
