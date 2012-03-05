@@ -3,6 +3,7 @@ from google.appengine.ext.webapp import util
 from google.appengine.api import urlfetch
 from google.appengine.api.urlfetch_errors import *
 from google.appengine.runtime import apiproxy_errors
+from google.appengine.runtime import DeadlineExceededError
 
 import traceback, logging, cgitb, cgi
 import simplejson as json
@@ -38,6 +39,8 @@ def fetch_status( url, headers=None ):
 		response = {"status_code":-4, "message":"%s" % e, "url":url}
 	except ResponseTooLargeError, e:
 		response = {"status_code":-5, "message":"%s" % e, "url":url}
+	except DeadlineExceededError, e:
+		response = {"status_code":-6, "message":"%s" % e, "url":url}
 	except Exception, e:
 		response = {"status_code":-100, "message":"%s" % e, "url":url}
 	return response
