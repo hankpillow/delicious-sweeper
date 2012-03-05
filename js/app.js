@@ -465,6 +465,7 @@ var app =
 			node_try.attr("href",xml_url);
 
 		app.dom.step3.list.append( node );
+		app.delete_status( undefined );
 	}
 	
 	, detail_item : function( value )
@@ -523,7 +524,7 @@ var app =
 	
 	, delete_item : function( event )
 	{
-		if( event.originalEvent !=undefined && app.is_deleting_all==true ){
+		if( (event.originalEvent !=undefined && app.is_deleting_all==true) || app.trigged_delete!=undefined ){
 			// avoid delete during 'delete all'.
 			return;
 		}
