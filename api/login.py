@@ -35,7 +35,7 @@ class MainHandler(webapp.RequestHandler):
 
 		response = {}
 		try:
-			result = urlfetch.fetch(url="https://api.del.icio.us/v1/posts/all?start=start",headers={"Authorization": "Basic %s" % base64.b64encode(username+":"+password)},deadline=60, allow_truncated=True)
+			result = urlfetch.fetch(url=("https://api.del.icio.us/v1/posts/all?start="+start),headers={"Authorization": "Basic %s" % base64.b64encode(username+":"+password)},deadline=60, allow_truncated=True)
 			response = {"status_code":0,"result":result.content}
 		except Exception, e:
 			response = {"status_code":-6, "message":"%s" % e, "url":url}
