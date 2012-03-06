@@ -31,7 +31,7 @@ class MainHandler(webapp.RequestHandler):
 def fetch_status( url, headers=None ):
 	response = {}
 	try:
-		result = urlfetch.fetch( url=url, deadline=60, allow_truncated=True)
+		result = urlfetch.fetch( url=url, deadline=30, allow_truncated=True)
 		response = {"status_code":result.status_code,"url":url}
 	except DownloadError, e:
 		response = {"status_code":-3, "message":"%s" % e, "url":url}
