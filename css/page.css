@@ -70,6 +70,24 @@ footer a{
 }
 
 .facebook{
+	float:left;
+	margin-left:20px;
+	margin-top:8px;
+}
+
+.try{
 	float:right;
-	margin-top:5px;
+}
+.try img {
+	opacity:0.4;
+	float:left;
+}
+.try small {
+	float:left;
+	font-weight:100;
+	margin-top:12px;
+	margin-left:6px;	
+}
+.try a{
+	color:#68757d;	
 }
