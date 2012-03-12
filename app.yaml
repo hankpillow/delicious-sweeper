@@ -1,5 +1,5 @@
 application: delicious-sweeper
-version: 1-0-6
+version: 1-0-7
 runtime: python
 api_version: 1
 
@@ -42,6 +42,8 @@ handlers:
   upload: 404.html
 
 error_handlers:
-- file: error.html
+- file: errors/error.html
 - error_code: dos_api_denial
-  file: error.html
+  file: errors/error.html
+- error_code: over_quota
+  file: errors/over_quota.html
