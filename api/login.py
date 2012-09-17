@@ -18,14 +18,9 @@ class MainHandler(webapp.RequestHandler):
 		cgitb.enable()
 		params = cgi.FieldStorage()
 
-		username = params.getvalue("username")
-		if (username == None):
-			self.response.out.write( json.dumps({"status_code":-2,"message":"null username"}) )
-			return
-
-		password = params.getvalue("password")
-		if (password == None):
-			self.response.out.write( json.dumps({"status_code":-3,"message":"null password"}) )
+		encoded_credencial = params.getvalue("credencials")
+		if (encoded_credencial == None):
+			self.response.out.write( json.dumps({"status_code":-2,"message":"empty user"}) )
 			return
 
 		start = params.getvalue("start")
@@ -33,9 +28,8 @@ class MainHandler(webapp.RequestHandler):
 			self.response.out.write( json.dumps({"status_code":-4,"message":"null start"}) )
 			return
 
-		response = {}
 		try:
-			result = urlfetch.fetch(url=("https://api.del.icio.us/v1/posts/all?start="+start),headers={"Authorization": "Basic %s" % base64.b64encode(username+":"+password)},deadline=60, allow_truncated=True)
+			result = urlfetch.fetch(url=("https://api.del.icio.us/v1/posts/all?start="+start),headers={"Authorization": "Basic %s" % encoded_credencial},deadline=60, allow_truncated=True)
 			response = {"status_code":0,"result":result.content}
 		except Exception, e:
 			response = {"status_code":-6, "message":"%s" % e, "url":url}

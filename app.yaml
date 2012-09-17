@@ -14,6 +14,14 @@ handlers:
   static_files: index.html
   upload: index.html
 
+- url: /strings
+  static_files: strings.xml
+  upload: strings.xml
+
+- url: /parse
+  static_files: parse.html
+  upload: parse.html
+
 - url: /fetch
   script: api/fetch.py
 
